@@ -33,13 +33,16 @@ class UserControllerIntegrationTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private String baseUrl;
 
     @BeforeEach
     void setup() {
         baseUrl = "http://localhost:" + port + "/api/users";
-        // Clear all users before each test
-        userService.clearAll();
+        // Clear all users before each test using repository to reset state
+        userRepository.deleteAll();
     }
 
     // ========== CREATE Integration Tests ==========

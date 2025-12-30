@@ -3,6 +3,9 @@ package com.example.tuto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,15 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * STEP 2: Testing a Service Class
- * This demonstrates unit testing for business logic
+ * This demonstrates unit testing for business logic using JPA repository
  */
+@DataJpaTest
+@Import(UserService.class)
 class UserServiceTest {
 
+    @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @BeforeEach
     void setup() {
-        userService = new UserService();
+        userRepository.deleteAll();
     }
 
     @Test
@@ -125,9 +134,10 @@ class UserServiceTest {
     void testUserIdAutoIncrement() {
         User user1 = userService.createUser("User 1", "user1@example.com");
         User user2 = userService.createUser("User 2", "user2@example.com");
-        
-        assertEquals(1L, user1.getId());
-        assertEquals(2L, user2.getId());
+
+        assertNotNull(user1.getId());
+        assertNotNull(user2.getId());
+        assertNotEquals(user1.getId(), user2.getId());
     }
 
     @Test

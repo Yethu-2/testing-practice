@@ -19,6 +19,9 @@ class UserServiceIntegrationTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @DisplayName("Should inject UserService from Spring context")
     void testServiceInjection() {
@@ -28,6 +31,7 @@ class UserServiceIntegrationTest {
     @Test
     @DisplayName("Should create and retrieve user using Spring-managed service")
     void testCreateUserWithSpringContext() {
+        userRepository.deleteAll();
         User user = userService.createUser("Spring User", "spring@example.com");
         
         assertNotNull(user);

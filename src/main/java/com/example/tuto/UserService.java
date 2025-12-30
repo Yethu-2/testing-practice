@@ -1,7 +1,6 @@
 package com.example.tuto;
 
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,8 +11,11 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-    private final List<User> users = new ArrayList<>();
-    private long nextId = 1;
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User createUser(String name, String email) {
         if (name == null || name.isBlank()) {
@@ -23,38 +25,39 @@ public class UserService {
             throw new IllegalArgumentException("Invalid email");
         }
 
-        User user = new User(nextId++, name, email);
-        users.add(user);
-        return user;
+        User user = new User(name, email);
+        return userRepository.save(user);
     }
 
     public Optional<User> findById(Long id) {
-        return users.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst();
+        return userRepository.findById(id);
     }
 
     public List<User> getAllUsers() {
-        return new ArrayList<>(users);
+        return userRepository.findAll();
     }
 
     public boolean deleteUser(Long id) {
-        return users.removeIf(user -> user.getId().equals(id));
+        if (!userRepository.existsById(id)) {
+            return false;
+        }
+        userRepository.deleteById(id);
+        return true;
     }
 
     public int getUserCount() {
-        return users.size();
+        return Math.toIntExact(userRepository.count());
     }
 
     public Optional<User> updateUser(Long id, String name, String email) {
         Optional<User> userOptional = findById(id);
-        
+
         if (userOptional.isEmpty()) {
             return Optional.empty();
         }
 
         User user = userOptional.get();
-        
+
         if (name != null && !name.isBlank()) {
             user.setName(name);
         }
@@ -64,10 +67,11 @@ public class UserService {
             throw new IllegalArgumentException("Invalid email");
         }
 
-        return Optional.of(user);
+        User saved = userRepository.save(user);
+        return Optional.of(saved);
     }
 
     public void clearAll() {
-        users.clear();
+        userRepository.deleteAll();
     }
 }
