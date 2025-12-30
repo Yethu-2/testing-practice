@@ -136,6 +136,19 @@ assertThrows(Exception.class, ...)  // Check exception thrown
 ```
 Then test the REST API at: `http://localhost:8080/api/users`
 
+### H2 In-Memory DB Quick Guide
+- JDBC URL: `jdbc:h2:mem:tuto`  | User: `sa` | Password: (empty)
+- H2 console: `http://localhost:8080/h2-console` (enable after app start)
+- Driver: `org.h2.Driver`
+- In-memory DB persists while the app runs; restarts give a fresh DB.
+- Tests use this in-memory DB automatically via Spring Boot defaults.
+
+**How to open console:**
+1) Start app: `./mvnw spring-boot:run`
+2) Navigate to `/h2-console`
+3) Set JDBC URL to `jdbc:h2:mem:tuto`, user `sa`, no password
+4) Connect and browse tables; run SQL (e.g., `SELECT * FROM USER;`).
+
 ---
 
 ## 📝 Practice Exercises
